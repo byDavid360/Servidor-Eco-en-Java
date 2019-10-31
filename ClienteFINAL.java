@@ -7,49 +7,29 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 
+/*En esta clase crearemos el socket para conectarnos al servidor, del eco se ocuparán las hebras HebraEsribir y HebraLeer*/
+
 public class ClienteFINAL {
 
-	
 	public static void main(String[] args) {
-		String host = "localhost", Linea;
 		
-		if(args.length>0) {
+		String host = "localhost";			//declaramos el host como localhost en caso de que no se haya introducido ninguno en args[]
+		
+		if(args.length>0) {				//el nombre del host está almacenad en args, comprobamos si args contiene el nombre
 			host = args[0];
 		}
 	
 		try {
 			
-			Socket socket = new Socket(host, 25552);
+			Socket socket = new Socket(host, 25552);					//creamos el socket hacia el host y elegimos el puerto 25552
 			
-			HebraEscribir ClienteEscribe = new HebraEscribir(socket);		//hebra para que el cliente escriba
-
-			HebraLeer ClienteLee = new HebraLeer(socket);					//hebra para que el cliente lea
-			ClienteEscribe.join();											//esperamos a que se termine el escribir para leer
+			HebraEscribir ClienteEscribe = new HebraEscribir(socket);			//llamamos a la hebra que permitirá escribir al cliente
+			HebraLeer ClienteLee = new HebraLeer(socket);					//llamamos a la hebra que leerá 
+			ClienteEscribe.join();								//esperamos a que se termine de escribir el contenido de cliente para poder leerer
 			System.exit(0);
-			
-			/*LineNumberReader  netIn = new LineNumberReader(new InputStreamReader(socket.getInputStream()));
-			BufferedReader LLegaDeServer = new BufferedReader(new InputStreamReader(socket.getInputStream())); //para recibir de server
-			PrintWriter netOut = new PrintWriter(socket.getOutputStream(),true);
-			LineNumberReader  sysIn = new LineNumberReader(new InputStreamReader(System.in));		//es como un scanner
-			
-			
-			while(true) {
-				
-				System.out.print("Escribe algo: ");
-				Linea = sysIn.readLine();
-				if(Linea.equals(".")) {
-					System.out.println("Has escrito el caracter prohibido. Cerrando sesion...");
-					break;
-				}
-				netOut.println(Linea);
-				System.out.println("El servidor te responde con: "+LLegaDeServer.readLine());
-				
-			}
-			*/
 			
 		}catch(IOException | InterruptedException e) {
 			System.out.println("ERROR: " + e);
 		}
-		
 	}
 }
