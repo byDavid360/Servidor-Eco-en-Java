@@ -5,15 +5,16 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/*Esta clase se ocupará de la escritura del contenido por parte del cliente hacia el servidor*/
+
 public class HebraEscribir extends Thread {
 	
 	Socket MiSocket;
 	String Linea;
-	LineNumberReader  sysIn = new LineNumberReader(new InputStreamReader(System.in));		//es como un scanner
+	LineNumberReader  sysIn = new LineNumberReader(new InputStreamReader(System.in));		//con el LineNumberReader leeremos la entrada de datos del cliente
 	PrintWriter netOut;
-	BufferedReader LLegaDeServer;
-
-	
+	BufferedReader LLegaDeServer;									//con el BufferedReader leeremos el contenido que llega del servidor a
+													//modo de respuesta
 	public HebraEscribir(Socket socket) {
 		MiSocket = socket;
 		this.start();
@@ -22,36 +23,26 @@ public class HebraEscribir extends Thread {
 	
 	public void run() {
 		
-		
-		
 		try {
 			sleep(2000);
-			netOut =  new PrintWriter(MiSocket.getOutputStream(),true);
+			netOut =  new PrintWriter(MiSocket.getOutputStream(),true);			//con el PrintWriter escribiremos los datos del cliente
 			HebraLeer Lee = new HebraLeer(MiSocket);
-			//LLegaDeServer = new BufferedReader(new InputStreamReader(MiSocket.getInputStream())); //para recibir de server
-			//System.out.println(LLegaDeServer.readLine());
-
+			
 			while(true) {
 				
-				//System.out.print("Escribe algo: ");
-				Linea = sysIn.readLine();
-				netOut.println(Linea);
+				Linea = sysIn.readLine();						//leemos lo que escribe el cliente
+				netOut.println(Linea);							//alamcenamos lo que escribe el cliente
 				
-				if(Linea.equals(".")) {
+				if(Linea.equals(".")) {							//si el cliente escribe un punto se cerrará la conexion
+					
 					System.out.println("Has escrito el caracter prohibido. Cerrando Conexion...");
 					break;
 				}
-				//System.out.println("El servidor te responde con: "+LLegaDeServer.readLine());
-				
+	
 			}
+			
 		} catch (IOException | InterruptedException e) {
-		
 			e.printStackTrace();
 		}
-	
-		
-		
-		
 	}
-
 }
